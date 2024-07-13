@@ -52,7 +52,7 @@ const SignUpPage = () => {
 			};
 			delete dataToSend.confirmPassword;
 	
-			const response = await axios.post("http://127.0.0.1:5001/auth/signup", dataToSend);
+			const response = await axios.post("http://localhost:5001/auth/signup", dataToSend);
 			toast.success("Registration successful. Admin will verify your info.");
 			navigate("/login");
 		} catch (err) {

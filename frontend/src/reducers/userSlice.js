@@ -31,7 +31,7 @@ export const fetchPendingUsers = createAsyncThunk(
   "user/fetchPendingUsers",
   async () => {
     const response = await axios.get(
-      "http://127.0.0.1:5001/auth/pending-users"
+      "http://localhost:5001/auth/pending-users"
     );
     return response.data;
   }
@@ -41,7 +41,7 @@ export const updateUserRole = createAsyncThunk(
   "user/updateUserRole",
   async ({ userId, role }) => {
     const response = await axios.post(
-      "http://127.0.0.1:5001/auth/update-role",
+      "http://localhost:5001/auth/update-role",
       { user_id: userId, role }
     );
     return response.data;
@@ -52,7 +52,7 @@ export const deleteUser = createAsyncThunk(
   "user/deleteUser",
   async ({ userId }) => {
     const response = await axios.post(
-      "http://127.0.0.1:5001/auth/delete-user",
+      "http://localhost:5001/auth/delete-user",
       { user_id: userId }
     );
     return response.data;

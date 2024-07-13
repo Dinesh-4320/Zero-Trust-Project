@@ -41,7 +41,7 @@ const LoginPage = () => {
     try {
       const hashedPassword = sha256(loginData.password);
       const response = await axios.post(
-        "http://127.0.0.1:5001/auth/login",
+        "http://localhost:5001/auth/login",
         {
           username: loginData.username,
           password: hashedPassword,

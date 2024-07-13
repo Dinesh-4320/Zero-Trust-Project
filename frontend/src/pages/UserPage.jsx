@@ -9,7 +9,7 @@ const UserPage = () => {
 
   useEffect(() => {
     const fetchAPI = async () => {
-      const response = await axios.get("http://127.0.0.1:5001/api/users");
+      const response = await axios.get("http://localhost:5001/api/users");
       console.log(response.data);
       setUsers(response.data);
     };

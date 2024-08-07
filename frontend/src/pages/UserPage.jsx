@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { API_URLS } from "../apiUrls";
 
 const UserPage = () => {
   const user = useSelector((state) => state.user.user);
@@ -9,7 +10,7 @@ const UserPage = () => {
 
   useEffect(() => {
     const fetchAPI = async () => {
-      const response = await axios.get("http://127.0.0.1:5001/api/users");
+      const response = await axios.get(API_URLS.GET_USERS);
       console.log(response.data);
       setUsers(response.data);
     };

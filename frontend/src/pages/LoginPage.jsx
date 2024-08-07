@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import InputField from "../components/InputField";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { API_URLS } from "../apiUrls";
 import { setUser } from "../reducers/userSlice";
 import { sha256 } from 'js-sha256';
 
@@ -40,9 +41,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const hashedPassword = sha256(loginData.password);
-      const response = await axios.post(
-        "http://127.0.0.1:5001/auth/login",
-        {
+      const response = await axios.post(API_URLS.LOGIN, {
           username: loginData.username,
           password: hashedPassword,
         }

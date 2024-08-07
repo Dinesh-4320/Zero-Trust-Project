@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { API_URLS } from "../apiUrls";
 import axios from "axios";
 
 const initialState = {
@@ -30,9 +31,7 @@ const userSlice = createSlice({
 export const fetchPendingUsers = createAsyncThunk(
   "user/fetchPendingUsers",
   async () => {
-    const response = await axios.get(
-      "http://127.0.0.1:5001/auth/pending-users"
-    );
+    const response = await axios.get(API_URLS.PENDING_USERS);
     return response.data;
   }
 );
@@ -40,8 +39,7 @@ export const fetchPendingUsers = createAsyncThunk(
 export const updateUserRole = createAsyncThunk(
   "user/updateUserRole",
   async ({ userId, role }) => {
-    const response = await axios.post(
-      "http://127.0.0.1:5001/auth/update-role",
+    const response = await axios.post(API_URLS.UPDATE_ROLE,
       { user_id: userId, role }
     );
     return response.data;
@@ -51,8 +49,7 @@ export const updateUserRole = createAsyncThunk(
 export const deleteUser = createAsyncThunk(
   "user/deleteUser",
   async ({ userId }) => {
-    const response = await axios.post(
-      "http://127.0.0.1:5001/auth/delete-user",
+    const response = await axios.post(API_URLS.DELETE_USER, 
       { user_id: userId }
     );
     return response.data;

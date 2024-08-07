@@ -3,6 +3,7 @@ import RadioButton from "../components/RadioButton";
 import InputField from "../components/InputField";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import { API_URLS } from "../apiUrls";
 import axios from "axios";
 import { sha256 } from 'js-sha256';
 
@@ -52,7 +53,7 @@ const SignUpPage = () => {
 			};
 			delete dataToSend.confirmPassword;
 	
-			const response = await axios.post("http://127.0.0.1:5001/auth/signup", dataToSend);
+			const response = await axios.post("http://localhost:5001/auth/signup", dataToSend);
 			toast.success("Registration successful. Admin will verify your info.");
 			navigate("/login");
 		} catch (err) {

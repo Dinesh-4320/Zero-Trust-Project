@@ -6,6 +6,7 @@ import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon2 from 'react-native-vector-icons/Ionicons';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
+import MessageDetail from './screens/MessageDetail';
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -13,7 +14,13 @@ const StackNavigator = () => {
 
   function BottomTabs() {
     return (
-      <Tab.Navigator>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: {backgroundColor: '#1a1a1a'}, // Dark background color for tabs
+          tabBarActiveTintColor: '#4a90e2', // Light blue for active tab (or any color that contrasts well)
+          tabBarInactiveTintColor: '#b0b0b0', // Gray for inactive tab
+          tabBarLabelStyle: {fontSize: 12}, // Customize label style
+        }}>
         <Tab.Screen
           name="Home"
           component={HomeScreen}
@@ -22,9 +29,9 @@ const StackNavigator = () => {
             headerShown: false,
             tabBarIcon: ({focused}) =>
               focused ? (
-                <Icon2 name="home-sharp" size={30} color="#003580" />
+                <Icon2 name="home-sharp" size={30} color="#4a90e2" />
               ) : (
-                <Icon2 name="home-outline" size={30} />
+                <Icon2 name="home-outline" size={30} color="#b0b0b0" />
               ),
           }}
         />
@@ -32,13 +39,13 @@ const StackNavigator = () => {
           name="Bookings"
           component={HomeScreen}
           options={{
-            tabBarLabel: 'Bookings',
+            tabBarLabel: 'Labels',
             headerShown: false,
             tabBarIcon: ({focused}) =>
               focused ? (
-                <Icon2 name="notifications" size={30} color="#003580" />
+                <Icon2 name="notifications" size={30} color="#4a90e2" />
               ) : (
-                <Icon2 name="notifications-outline" size={30} />
+                <Icon2 name="notifications-outline" size={30} color="#b0b0b0" />
               ),
           }}
         />
@@ -46,13 +53,13 @@ const StackNavigator = () => {
           name="ChatBot"
           component={HomeScreen}
           options={{
-            tabBarLabel: 'ChatBot',
+            tabBarLabel: 'Spam',
             headerShown: false,
             tabBarIcon: ({focused}) =>
               focused ? (
-                <Icon2 name="chatbubbles" size={30} color="#003580" />
+                <Icon2 name="chatbubbles" size={30} color="#4a90e2" />
               ) : (
-                <Icon2 name="chatbubbles-outline" size={30} />
+                <Icon2 name="chatbubbles-outline" size={30} color="#b0b0b0" />
               ),
           }}
         />
@@ -64,9 +71,9 @@ const StackNavigator = () => {
             headerShown: false,
             tabBarIcon: ({focused}) =>
               focused ? (
-                <Icon1 name="account" size={30} color="#003580" />
+                <Icon1 name="account" size={30} color="#4a90e2" />
               ) : (
-                <Icon1 name="account-outline" size={30} />
+                <Icon1 name="account-outline" size={30} color="#b0b0b0" />
               ),
           }}
         />
@@ -92,11 +99,11 @@ const StackNavigator = () => {
           component={BottomTabs}
           options={{headerShown: false}}
         />
-        {/* <Stack.Screen
-          name="Search"
-          component={SearchScreen}
-          options={{headerShown: false}}
-        /> */}
+        <Stack.Screen
+          name="MessageDetail"
+          component={MessageDetail}
+          options={{title: 'Message Detail'}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

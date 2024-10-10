@@ -22,7 +22,8 @@ def create_user(data):
             "profile_photo": profile_pic, 
             "gender": data['gender'],
             "role": None,
-            "date_created": datetime.utcnow()
+            "date_created": datetime.utcnow(),
+            "lastUpdatedSMS": None
         }
         result = mongo.Users.insert_one(user)
         return {"message": "User created successfully"}, 201

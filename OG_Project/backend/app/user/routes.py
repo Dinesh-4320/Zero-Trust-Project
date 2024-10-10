@@ -286,3 +286,80 @@ def get_auditors(current_user, current_role):
     except Exception as e:
         print(e)
         return jsonify({"status": "error", "message": f"Error retrieving auditors: {str(e)}"}), 500
+
+# Add a new SMS transaction for the logged-in user
+@user_bp.route("/sms-transaction", methods=["POST"])
+@token_required
+def add_sms_transaction(current_user, current_role):
+    if current_role != 'user':
+        return jsonify({"message": "Access denied. Users only."}), 403
+
+    data = request.get_json()
+    print(data)
+
+    # Check if data is a list
+    if not isinstance(data, list):
+        return jsonify({"error": "Invalid data format. Expected a list."}), 400
+
+    try:
+        # Process each SMS in the incoming list
+        for sms in data:
+            if 'address' not in sms or 'body' not in sms:
+                return jsonify({"error": "Missing required fields in SMS data."}), 400
+            
+            # Generate a unique key for the SMS transaction
+            sms_key = str(uuid.uuid4())
+
+            # Create the SMS transaction object
+            sms_transaction = {
+                "sender": sms['address'],
+                "message": sms['body'],
+                "timestamp": datetime.fromtimestamp(sms['date'] / 1000.0)  # Convert milliseconds to seconds
+            }
+
+            # Update the user's transaction record with the SMS transaction
+            result = mongo.transactions.update_one(
+                {"userId": ObjectId(current_user)},
+                {"$set": {f"transactionFromSMS.{sms_key}": sms_transaction}}
+            )
+
+            if result.modified_count == 0:
+                return jsonify({"error": "User record not found or SMS transaction not added."}), 404
+
+        # Update the lastUpdatedSMS in the Users table
+        mongo.Users.update_one(
+            {"_id": ObjectId(current_user)},
+            {"$set": {"lastUpdatedSMS": datetime.utcnow()}}
+        )
+
+        return jsonify({"message": "SMS transactions added and user updated successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error adding SMS transaction: {str(e)}"}), 500
+
+
+@user_bp.route("/sms-transactions", methods=["GET"])
+@token_required
+def get_sms_transactions(current_user, current_role):
+    if current_role != 'user':
+        return jsonify({"message": "Access denied. Users only."}), 403
+
+    try:
+        # Fetch the user's transaction record
+        user_transactions = mongo.transactions.find_one({"userId": ObjectId(current_user)})
+
+        if not user_transactions:
+            return jsonify({"error": "No transaction record found for the user."}), 404
+
+        # Extract SMS transactions from the document
+        sms_transactions = user_transactions.get("transactionFromSMS", {})
+
+        # If no SMS transactions found, return an empty list
+        if not sms_transactions:
+            return jsonify({"message": "No SMS transactions found."}), 200
+
+        return jsonify(sms_transactions), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error retrieving SMS transactions: {str(e)}"}), 500
+

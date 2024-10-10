@@ -10,6 +10,8 @@ import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
 import LoadingPage from "./pages/LoadingPage";
 import ShareTrans from "./pages/ShareTrans";
+import SMSTransactions from "./pages/SMSTransactions";
+import { API_URLS } from "./apiUrls";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -26,7 +28,7 @@ function App() {
       localStorage.removeItem("authToken");
       dispatch(clearUser());
       toast.error("Invalid role. User access only.");
-      window.location.href = "http://localhost:3000/login";
+      window.location.href = API_URLS.REDIRECT_BAD_URL;
     };
 
     if (storedToken) {
@@ -45,13 +47,13 @@ function App() {
         } else {
           localStorage.removeItem("authToken");
           dispatch(clearUser());
-          window.location.href = "http://localhost:3000/login";
+          window.location.href = API_URLS.REDIRECT_BAD_URL;
         }
       } catch (error) {
         console.error("Invalid token format", error);
         localStorage.removeItem("authToken");
         dispatch(clearUser());
-        window.location.href = "http://localhost:3000/login";
+        window.location.href = API_URLS.REDIRECT_BAD_URL;
       }
     } else {
       const params = new URLSearchParams(window.location.search);
@@ -71,14 +73,14 @@ function App() {
               handleInvalidRole();
             }
           } else {
-            window.location.href = "http://localhost:3000/login";
+            window.location.href = API_URLS.REDIRECT_BAD_URL;
           }
         } catch (error) {
           console.error("Invalid token format", error);
-          window.location.href = "http://localhost:3000/login";
+          window.location.href = API_URLS.REDIRECT_BAD_URL;
         }
       } else {
-        window.location.href = "http://localhost:3000/login";
+        window.location.href = API_URLS.REDIRECT_BAD_URL;
       }
     }
   }, [dispatch]);
@@ -105,6 +107,12 @@ function App() {
             path="/share"
             element={
               useSelector((state) => state.user.status) ? <ShareTrans /> : <LoadingPage />
+            }
+          />
+          <Route
+            path="/newTransactions"
+            element={
+              useSelector((state) => state.user.status) ? <SMSTransactions/> : <LoadingPage />
             }
           />
           <Route path="*" element={<NotFound />} />

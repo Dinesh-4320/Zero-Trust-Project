@@ -67,6 +67,7 @@ def create_initial_transaction_record(user_id):
         transaction_record = {
             "userId": ObjectId(user_id),
             "transactions": {},  # Initialize with an empty dictionary of transactions
+            "transactionFromSMS": {},  # Placeholder for transactions from SMS
             "sharedWith": []
         }
         mongo.transactions.insert_one(transaction_record)

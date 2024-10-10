@@ -7,6 +7,7 @@ import Icon2 from 'react-native-vector-icons/Ionicons';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import MessageDetail from './screens/MessageDetail';
+import ProfileScreen from './screens/ProfileScreen';
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -36,21 +37,7 @@ const StackNavigator = () => {
           }}
         />
         <Tab.Screen
-          name="Bookings"
-          component={HomeScreen}
-          options={{
-            tabBarLabel: 'Labels',
-            headerShown: false,
-            tabBarIcon: ({focused}) =>
-              focused ? (
-                <Icon2 name="notifications" size={30} color="#4a90e2" />
-              ) : (
-                <Icon2 name="notifications-outline" size={30} color="#b0b0b0" />
-              ),
-          }}
-        />
-        <Tab.Screen
-          name="ChatBot"
+          name="Spam"
           component={HomeScreen}
           options={{
             tabBarLabel: 'Spam',
@@ -65,7 +52,7 @@ const StackNavigator = () => {
         />
         <Tab.Screen
           name="Profile"
-          component={HomeScreen}
+          component={ProfileScreen}
           options={{
             tabBarLabel: 'Profile',
             headerShown: false,

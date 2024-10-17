@@ -1,0 +1,65 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zta-ingress
+  namespace: zta
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/secure-backends: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/websocket-services: "zta-backend,zta-public,zta-user,zta-admin,zta-auditor"
+    nginx.org/websocket-services: "zta-backend,zta-public,zta-user,zta-admin,zta-auditor"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: af67a1e979d104242a0121bc2f5415bb-bfcefccd6df36bbe.elb.us-east-1.amazonaws.com
+    http:
+      paths:
+      - path: /backend
+        pathType: Prefix
+        backend:
+          service:
+            name: zta-backend
+            port:
+              number: 5001
+
+      - path: /public-service
+        pathType: Prefix
+        backend:
+          service:
+            name: zta-public
+            port:
+              number: 3000
+
+      - path: /admin-service
+        pathType: Prefix
+        backend:
+          service:
+            name: zta-admin
+            port:
+              number: 3001
+
+      - path: /user-service
+        pathType: Prefix
+        backend:
+          service:
+            name: zta-user
+            port:
+              number: 3002
+
+      - path: /auditor-service
+        pathType: Prefix
+        backend:
+          service:
+            name: zta-auditor
+            port:
+              number: 3003
+  tls:
+  - secretName: zta-tls
+    hosts:
+      - af67a1e979d104242a0121bc2f5415bb-bfcefccd6df36bbe.elb.us-east-1.amazonaws.com

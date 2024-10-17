@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: zta
+  labels:
+    {{- include "backend.labels" . | nindent 4 }}
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "backend.selectorLabels" . | nindent 6 }}
+      app: backend
+  template:
+    metadata:
+      labels:
+        {{- include "backend.labels" . | nindent 8 }}
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: disciklean/zta-app-backend:latest
+          ports:
+            - name: http
+              containerPort: 5001
+              protocol: TCP

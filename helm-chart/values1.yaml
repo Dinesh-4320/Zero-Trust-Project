@@ -1,0 +1,61 @@
+gateway:
+  replicaCount: 1
+
+  image:
+    repository: disciklean/zta-app-public
+    pullPolicy: Always
+    tag: "latest"
+
+  imagePullSecrets: []
+  nameOverride: "public"
+  fullnameOverride: "public"
+
+  service:
+    type: N
+    port: 3000
+
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations: 
+      - kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: af67a1e979d104242a0121bc2f5415bb-bfcefccd6df36bbe.elb.us-east-1.amazonaws.com
+        paths:
+          - path: /
+            pathType: prefix
+    tls: 
+      - secretName: zta-tls
+        hosts:
+          - af67a1e979d104242a0121bc2f5415bb-bfcefccd6df36bbe.elb.us-east-1.amazonaws.com
+
+auth:
+  replicaCount: 1
+
+  image:
+    repository: disciklean/zta-auth
+    pullPolicy: Always
+    tag: "latest"
+
+  imagePullSecrets: []
+  nameOverride: "auth"
+  fullnameOverride: "auth"
+
+  service:
+    type: ClusterIP
+    port: 5000
+
+  ingress:
+    enabled: false
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+
+  autoscaling:
+    enabled: false

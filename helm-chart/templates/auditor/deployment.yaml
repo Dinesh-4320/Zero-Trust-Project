@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auditor
+  namespace: zta
+  labels:
+    {{- include "auditor.labels" . | nindent 4 }}
+    app: auditor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "auditor.selectorLabels" . | nindent 6 }}
+      app: auditor
+  template:
+    metadata:
+      labels:
+        {{- include "auditor.labels" . | nindent 8 }}
+        app: auditor
+    spec:
+      containers:
+        - name: auditor
+          image: disciklean/zta-app-auditor:latest
+          ports:
+            - name: http
+              containerPort: 3003
+              protocol: TCP

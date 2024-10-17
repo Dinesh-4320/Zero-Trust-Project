@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: public
+  namespace: zta
+  labels:
+    {{- include "public.labels" . | nindent 4 }}
+    app: public
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "public.selectorLabels" . | nindent 6 }}
+      app: public
+  template:
+    metadata:
+      labels:
+        {{- include "public.labels" . | nindent 8 }}
+        app: public
+    spec:
+      containers:
+        - name: public
+          image: disciklean/zta-app-public:latest
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP

@@ -1,0 +1,13 @@
+customRules:
+  rules-application.yaml: |-
+    - rule: Illegal read of application file from Container
+      desc: This rule helps us in detecting adversary trying to alter the application file to perform his attack.
+      condition: >
+        container
+        and evt.type = execve
+        and proc.tty != 0
+        and evt.dir=< 
+        and proc.name = "cat"
+      output: Illegal read executed with file in shell (user=%user.name container_id=%container.id container_name=%container.name file=%fd.name)
+      priority: ALERT
+      tags: [app_read]

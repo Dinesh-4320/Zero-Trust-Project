@@ -1,0 +1,69 @@
+public:
+  replicaCount: 1
+
+  image:
+    name: "disciklean/zta-app-public:latest"
+    pullPolicy: Always
+
+  imagePullSecrets: []
+  nameOverride: "public"
+
+  service:
+    type: ClusterIP
+    port: 3000
+
+admin:
+  replicaCount: 1
+
+  image:
+    name: "disciklean/zta-app-admin:latest"
+    pullPolicy: Always
+
+  imagePullSecrets: []
+  nameOverride: "admin"
+
+  service:
+    type: ClusterIP
+    port: 3001
+
+user:
+  replicaCount: 1
+
+  image:
+    name: "disciklean/zta-app-user:latest"
+    pullPolicy: Always
+
+  imagePullSecrets: []
+  nameOverride: "user"
+
+  service:
+    type: ClusterIP
+    port: 3002
+
+auditor:
+  replicaCount: 1
+
+  image:
+    name: "disciklean/zta-app-auditor:latest"
+    pullPolicy: Always
+
+  imagePullSecrets: []
+  nameOverride: "auditor"
+
+  service:
+    type: ClusterIP
+    port: 3003
+
+backend:
+  replicaCount: 1
+
+  image:
+    name: "disciklean/zta-app-backend:latest"
+    pullPolicy: Always
+
+  imagePullSecrets: []
+  nameOverride: "backend"
+
+  service:
+    type: ClusterIP
+    port: 5001

@@ -9,9 +9,9 @@ import TransactionPage from "./pages/TransactionPage";
 import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
 import LoadingPage from "./pages/LoadingPage";
-import ShareTrans from "./pages/ShareTrans";
 import SMSTransactions from "./pages/SMSTransactions";
 import { API_URLS } from "./apiUrls";
+import ShareTransWithPay from "./pages/ShareTransWithPay";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -95,24 +95,43 @@ function App() {
           />
           <Route
             path="/user"
-            element={useSelector((state) => state.user.status) ? <UserPage /> : <LoadingPage />}
+            element={
+              useSelector((state) => state.user.status) ? (
+                <UserPage />
+              ) : (
+                <LoadingPage />
+              )
+            }
           />
           <Route
             path="/transaction/:id"
             element={
-              useSelector((state) => state.user.status) ? <TransactionPage /> : <LoadingPage />
+              useSelector((state) => state.user.status) ? (
+                <TransactionPage />
+              ) : (
+                <LoadingPage />
+              )
             }
           />
+
           <Route
             path="/share"
             element={
-              useSelector((state) => state.user.status) ? <ShareTrans /> : <LoadingPage />
+              useSelector((state) => state.user.status) ? (
+                <ShareTransWithPay />
+              ) : (
+                <LoadingPage />
+              )
             }
           />
           <Route
             path="/newTransactions"
             element={
-              useSelector((state) => state.user.status) ? <SMSTransactions/> : <LoadingPage />
+              useSelector((state) => state.user.status) ? (
+                <SMSTransactions />
+              ) : (
+                <LoadingPage />
+              )
             }
           />
           <Route path="*" element={<NotFound />} />

@@ -14,4 +14,10 @@ export const API_URLS = {
   REVOKE_ACCESS: `${BASE_URL}/user/transactions/revoke`, // Revoke access to shared transactions
   GET_USER_TRANSACTIONS: `${BASE_URL}/user/user-transactions`, // Get transactions shared with the logged-in user
   GET_SMS_TRANSACTIONS: `${BASE_URL}/user/sms-transactions`, // Get SMS transactions for the logged-in user
+  RAZORPAY_BASE_URL: "https://checkout.razorpay.com/v1/checkout.js",
+  RAZORPAY_KEY_ID: "rzp_test_RKAPkmXFaLaFBP",
+  RAZORPAY_KEY_SECRET: "cYxtY7QXeEdvVwIztyV1oiSV",
+  RECAPTCHA_SITE_KEY: "6LddLKEqAAAAAOcWyqb2v5ahGu0LfnuOkB9zIrJK",
+  RECAPTCHA_SECRET_KEY: "6LddLKEqAAAAADBgZJ8AtlbNdmv1OF6dSNt-8WUz",
+  SENTRY_AUTH_TOKEN:"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"
 };

@@ -47,8 +47,9 @@ const PaymentDialog = ({ auditorId, onClose }) => {
 
   const generateFingerprint = async () => {
     try {
-      const { fingerprint } = await generateDeviceFingerprint();
+      const { fingerprint, fingerprintData } = await generateDeviceFingerprint();
       setFingerprint(fingerprint);
+      console.log("Fingerprint:", fingerprintData);
       toast.success("Fingerprint generated successfully!");
     } catch (error) {
       console.error("Error generating fingerprint:", error);
@@ -163,7 +164,7 @@ const PaymentDialog = ({ auditorId, onClose }) => {
           </div>
         )}
         <div className="mt-6 flex justify-end space-x-4">
-        <Button variant="destructive" onClick={() => {throw new Error("This is your first error!");}}>Throw an Error</Button>
+        <Button variant="destructive" onClick={() => {toast.error("An error was thrown"); throw new Error("This is your first error!");}}>Throw an Error</Button>
           <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>

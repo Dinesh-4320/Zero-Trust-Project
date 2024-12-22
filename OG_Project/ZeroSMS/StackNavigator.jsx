@@ -8,6 +8,7 @@ import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import MessageDetail from './screens/MessageDetail';
 import ProfileScreen from './screens/ProfileScreen';
+import SplashScreen from './screens/SplashScreen';
 
 const StackNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -72,15 +73,16 @@ const StackNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
+          name="Splash"
+          component={SplashScreen}
+          options={{headerShown: false}}
+        />
+
+        <Stack.Screen
           name="Login"
           component={LoginScreen}
           options={{headerShown: false}}
         />
-        {/* <Stack.Screen
-          name="Register"
-          component={RegisterScreen}
-          options={{headerShown: false}}
-        /> */}
         <Stack.Screen
           name="Main"
           component={BottomTabs}

@@ -20,7 +20,7 @@ import {
 } from '../store/authSlice'; // Import Redux actions
 import axios from 'axios';
 import {sha256} from 'js-sha256';
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from 'jwt-decode';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -77,36 +77,38 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     if (email === '' || password === '') {
-      Alert.alert('Error', 'Please fill all fields', [{ text: 'Ok' }]);
+      Alert.alert('Error', 'Please fill all fields', [{text: 'Ok'}]);
       return;
     } else {
       console.log('URL fetched:', BACKEND_URL);
-      dispatch(loginStart()); // Dispatch login start action
-  
+      dispatch(loginStart()); 
+
       const hashedPassword = sha256(password);
       try {
         const response = await axios.post(`http://${BACKEND_URL}/auth/login`, {
           username: email,
           password: hashedPassword,
         });
-  
+
         if (response.status === 200) {
-          const { token } = response.data; // Extract token from response
+          const {token} = response.data; // Extract token from response
           const decodedToken = jwtDecode(token);
           const currentTime = Date.now() / 1000;
-  
+
           // Check if the token is valid and handle roles
           if (decodedToken.exp && decodedToken.exp > currentTime) {
-            if (decodedToken.role === "user") {
-              dispatch(loginSuccess({ token, backendURL: BACKEND_URL })); // Save token and backend URL to Redux
+            if (decodedToken.role === 'user') {
+              dispatch(loginSuccess({token, backendURL: BACKEND_URL})); // Save token and backend URL to Redux
               dispatch(fetchUserProfile()); // Fetch user profile after successful login
-              Alert.alert('Success', 'Login successful', [{ text: 'Ok' }]);
+              Alert.alert('Success', 'Login successful', [{text: 'Ok'}]);
               navigation.replace('Main');
             } else {
               handleInvalidRole(); // Function to handle invalid role
             }
           } else {
-            Alert.alert('Error', 'Token expired, please log in again', [{ text: 'Ok' }]);
+            Alert.alert('Error', 'Token expired, please log in again', [
+              {text: 'Ok'},
+            ]);
           }
         } else {
           console.error(response);
@@ -120,8 +122,10 @@ const LoginScreen = () => {
   };
 
   const handleInvalidRole = () => {
-    Alert.alert('Error', 'Invalid role assigned. Please contact support.', [{ text: 'Ok' }]);
-  };  
+    Alert.alert('Error', 'Invalid role assigned. Please contact support.', [
+      {text: 'Ok'},
+    ]);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white p-2">
@@ -164,6 +168,13 @@ const LoginScreen = () => {
             <Text className="text-white text-lg font-semibold">Login In</Text>
           )}
         </TouchableOpacity>
+        {BACKEND_URL === '' && !loading ? (
+          <Text className="text-red-500 text-center mt-5">
+            Unable to connect to backend server
+          </Text>
+        ) : BACKEND_URL === '' && loading ? (
+          <Text>Connecting to backend... {BACKEND_URL}</Text>
+        ) : <Text classname="text-blue-700 text-center mt-5">Connected to backend: {BACKEND_URL}</Text>}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

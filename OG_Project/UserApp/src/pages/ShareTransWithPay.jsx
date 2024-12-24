@@ -17,8 +17,8 @@ const ShareTransWithPay = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await dispatch(getAuditors());
-        await dispatch(fetchUserSharedTransactions());
+        dispatch(getAuditors());
+        dispatch(fetchUserSharedTransactions());
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Failed to fetch data. Please try again later.");
@@ -30,7 +30,12 @@ const ShareTransWithPay = () => {
     fetchData();
   }, [dispatch]);
 
-  const handleShare = (auditorId) => {
+  const handleShare = async (auditorId) => {
+    // if auditor is already shared, do nothing
+    if (sharedWith.includes(auditorId)) {
+      toast.error("Auditor is already shared.");
+      return;
+    }
     setSelectedAuditor(auditorId);
   };
 

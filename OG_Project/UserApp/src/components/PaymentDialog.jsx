@@ -14,7 +14,7 @@ import { toast } from "react-hot-toast";
 import { API_URLS } from "../apiUrls";
 import { useDispatch, useSelector } from "react-redux";
 import ReCAPTCHA from "react-google-recaptcha";
-import { fetchUserProfile } from "@/reducers/userSlice";
+import { fetchUserProfile, shareTransaction } from "@/reducers/userSlice";
 
 const PaymentDialog = ({ auditorId, onClose }) => {
   const dispatch = useDispatch();
@@ -24,6 +24,7 @@ const PaymentDialog = ({ auditorId, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
   const { userDetails } = useSelector((state) => state.user);
+  const transactionId = useSelector((state) => state.user.transactionId);
 
   useEffect(() => {
     dispatch(fetchUserProfile());
@@ -47,76 +48,101 @@ const PaymentDialog = ({ auditorId, onClose }) => {
 
   const generateFingerprint = async () => {
     try {
-      const { fingerprint, fingerprintData } = await generateDeviceFingerprint();
+      const { fingerprint, fingerprintData } =
+        await generateDeviceFingerprint();
       setFingerprint(fingerprint);
-      console.log("Fingerprint:", fingerprintData);
       toast.success("Fingerprint generated successfully!");
     } catch (error) {
-      console.error("Error generating fingerprint:", error);
       toast.error("Failed to generate fingerprint.");
     }
   };
 
-  const handleVerify = async (value) => {
-    try {
-      setIsVerified(true);
-    } catch (error) {
-      console.error("reCAPTCHA verification failed:", error);
-    }
+  const handleVerify = (value) => {
+    setIsVerified(true);
   };
 
-  const handlePayment = async () => {
-    if (!agreementChecked || !isVerified) {
-      toast.error(
-        !agreementChecked
-          ? "You must agree to the terms and conditions."
-          : "Please complete the CAPTCHA verification."
-      );
+  const handlePayment = () => {
+    return new Promise((resolve, reject) => {
+      if (!agreementChecked || !isVerified) {
+        toast.error(
+          !agreementChecked
+            ? "You must agree to the terms and conditions."
+            : "Please complete the CAPTCHA verification."
+        );
+        reject(new Error("Preconditions not met"));
+        return;
+      }
+
+      loadRazorpay()
+        .then((razorpayLoaded) => {
+          if (!razorpayLoaded) {
+            toast.error("Failed to load payment gateway. Please try again.");
+            reject(new Error("Razorpay failed to load"));
+            return;
+          }
+
+          const options = {
+            key: API_URLS.RAZORPAY_KEY_ID,
+            amount: "50000", // Amount in smallest currency unit (e.g., paise for INR)
+            currency: "INR",
+            name: "ZTA - Expense Tracker",
+            description:
+              "Book the selected auditor\nNote that this is just an initial payment. The overall auditor fee is subject between the customer and the auditor.",
+            image:
+              "https://www.careerguide.com/career/wp-content/uploads/2023/07/Amrita-University.png",
+            prefill: {
+              name: userDetails.full_name || "Gaurav Kumar",
+              email: userDetails.email || "gaurav.kumar@example.com",
+              contact: userDetails.phone_no || "9000090000",
+            },
+            notes: {
+              address: "Razorpay Corporate Office",
+            },
+            theme: {
+              color: "#3399cc",
+            },
+            handler: function (response) {
+              toast.success("Payment Successful!");
+              resolve(true);
+            },
+            modal: {
+              ondismiss: function () {
+                toast.error("Payment was canceled.");
+                reject(new Error("Payment canceled"));
+              },
+            },
+          };
+
+          const rzp = new window.Razorpay(options);
+          rzp.open();
+        })
+        .catch((error) => {
+          toast.error("An error occurred during payment.");
+          reject(error);
+        });
+    });
+  };
+
+  const handleShare = async () => {
+    if (!transactionId) {
+      toast.error("No transactions available to share.");
       return;
     }
 
-    const razorpayLoaded = await loadRazorpay();
-    if (!razorpayLoaded) {
-      toast.error("Failed to load payment gateway. Please try again.");
-      return;
-    }
-
-    const options = {
-      key: API_URLS.RAZORPAY_KEY_ID, // Replace with your Razorpay Key ID
-      amount: "50000", // Amount in smallest currency unit (e.g., paise for INR)
-      currency: "INR",
-      name: "ZTA - Expense Tracker",
-      description:
-        "Book the selected auditor\nNote that this is just a initial payment. The overall auditor fee is subject between the customer and the auditor.",
-      image:
-        "https://www.careerguide.com/career/wp-content/uploads/2023/07/Amrita-University.png", 
-      prefill: {
-        name: userDetails.full_name || "Gaurav Kumar",
-        email: userDetails.email || "gaurav.kumar@example.com",
-        contact: userDetails.phone_no || "9000090000", 
-      },
-      notes: {
-        address: "Razorpay Corporate Office",
-      },
-      theme: {
-        color: "#3399cc",
-      },
-      handler: function (response) {
-        toast.success("Payment Successful! Transaction shared.");
-        console.log("Payment Details:", response);
-        setIsVerified(false);
+    try {
+      const paymentSuccess = await handlePayment();
+      if (paymentSuccess) {
+        await dispatch(shareTransaction({ auditorId, transactionId })).unwrap();
+        toast.success("Transaction shared successfully!");
         onClose();
-      },
-      modal: {
-        ondismiss: function () {
-          setIsVerified(false);
-          toast.error("Payment was canceled.");
-        },
-      },
-    };
-
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+      }
+    } catch (error) {
+      toast.error(
+        error.message === "Payment canceled"
+          ? "Payment was canceled. Please try again."
+          : "Failed to complete payment or share transaction."
+      );
+    }
   };
 
   return (
@@ -158,18 +184,16 @@ const PaymentDialog = ({ auditorId, onClose }) => {
                 onChange={handleVerify}
                 sitekey={API_URLS.RECAPTCHA_SITE_KEY}
                 size="normal"
-                onClick={handleVerify}
               />
             </div>
           </div>
         )}
         <div className="mt-6 flex justify-end space-x-4">
-        <Button variant="destructive" onClick={() => {toast.error("An error was thrown"); throw new Error("This is your first error!");}}>Throw an Error</Button>
           <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
           <Button
-            onClick={handlePayment}
+            onClick={handleShare}
             disabled={!agreementChecked || loading || !isVerified}
           >
             Proceed to Payment

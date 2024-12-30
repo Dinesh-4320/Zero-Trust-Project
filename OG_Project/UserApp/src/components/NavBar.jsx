@@ -8,7 +8,7 @@ const navigation = [
   { name: "Home", href: "/", current: true },
   { name: "Profile", href: "/user", current: false },
   { name: "Share", href: "/share", current: false },
-  // {name: 'OCR', href: '/OCR', current: false},
+  {name: 'SMS Transactions', href: '/newTransactions', current: false},
 ];
 
 function classNames(...classes) {

@@ -64,8 +64,7 @@ const GetMsg = ({ selectedRange }) => {
 
   // Function to classify whether a message is a transaction
   const classifyMessage = messageBody => {
-    const transactionKeywords =
-      /bank|money|transaction|credited|debited|balance|withdraw|deposit/i;
+    const transactionKeywords = /bank|money|transaction|credited|debited|balance|withdraw|deposit|bonus|points|claim|redeemed|account|credit|debit|payment|reward|statement|transaction|refund/i;
     return transactionKeywords.test(messageBody); // Return true if message contains transaction-related keywords
   };
 

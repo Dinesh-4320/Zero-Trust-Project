@@ -12,6 +12,8 @@ import LoadingPage from "./pages/LoadingPage";
 import SMSTransactions from "./pages/SMSTransactions";
 import { API_URLS } from "./apiUrls";
 import ShareTransWithPay from "./pages/ShareTransWithPay";
+import GetSMS from "./pages/GetSMS";
+import ModelStats from "./pages/ModelStats";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -128,7 +130,17 @@ function App() {
             path="/newTransactions"
             element={
               useSelector((state) => state.user.status) ? (
-                <SMSTransactions />
+                <GetSMS />
+              ) : (
+                <LoadingPage />
+              )
+            }
+          />
+          <Route
+            path="/model-stats"
+            element={
+              useSelector((state) => state.user.status) ? (
+                <ModelStats />
               ) : (
                 <LoadingPage />
               )

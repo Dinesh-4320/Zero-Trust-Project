@@ -314,7 +314,8 @@ def add_sms_transaction(current_user, current_role):
             sms_transaction = {
                 "sender": sms['address'],
                 "message": sms['body'],
-                "timestamp": datetime.fromtimestamp(sms['date'] / 1000.0)  # Convert milliseconds to seconds
+                "timestamp": datetime.fromtimestamp(sms['date'] / 1000.0),
+                "label": None
             }
 
             # Update the user's transaction record with the SMS transaction
@@ -363,3 +364,87 @@ def get_sms_transactions(current_user, current_role):
     except Exception as e:
         return jsonify({"error": f"Error retrieving SMS transactions: {str(e)}"}), 500
 
+@user_bp.route("/update-sms-labels", methods=["POST"])
+@token_required
+def update_sms_labels(current_user, current_role):
+    if current_role != 'user':
+        return jsonify({"message": "Access denied. Users only."}), 403
+
+    data = request.get_json()
+    print(data)
+
+    # Check if data is a list of SMS objects with an id and label
+    if not isinstance(data, list):
+        return jsonify({"error": "Invalid data format. Expected a list."}), 400
+
+    try:
+        # Process each SMS update request
+        for sms in data:
+            if 'id' not in sms or 'label' not in sms:
+                return jsonify({"error": "Missing required fields (id, label) in SMS data."}), 400
+
+            sms_id = sms['id']
+            label = sms['label']
+
+            # Update the SMS label based on the given id
+            result = mongo.transactions.update_one(
+                {"userId": ObjectId(current_user), f"transactionFromSMS.{sms_id}": {"$exists": True}},
+                {"$set": {f"transactionFromSMS.{sms_id}.label": label}}
+            )
+
+            if result.modified_count == 0:
+                return jsonify({"error": f"SMS with id {sms_id} not found or label not updated."}), 404
+
+        return jsonify({"message": "SMS labels updated successfully."}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error updating SMS labels: {str(e)}"}), 500
+
+@user_bp.route("/delete-sms-transaction", methods=["POST"])
+@token_required
+def delete_sms_transaction(current_user, current_role):
+    if current_role != 'user':
+        return jsonify({"message": "Access denied. Users only."}), 403
+
+    data = request.get_json()
+
+    # Ensure that the request contains the SMS ID to be deleted
+    if 'id' not in data:
+        return jsonify({"error": "Missing 'id' field in the request."}), 400
+
+    sms_id = data['id']
+
+    try:
+        # Delete the SMS transaction with the given ID
+        result = mongo.transactions.update_one(
+            {"userId": ObjectId(current_user), f"transactionFromSMS.{sms_id}": {"$exists": True}},
+            {"$unset": {f"transactionFromSMS.{sms_id}": ""}}
+        )
+
+        if result.modified_count == 0:
+            return jsonify({"error": f"SMS with id {sms_id} not found."}), 404
+
+        return jsonify({"message": "SMS transaction deleted successfully."}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error deleting SMS transaction: {str(e)}"}), 500
+
+@user_bp.route("/model-stats", methods=["GET"])
+@token_required
+def get_model_stats(current_user, current_role):
+    if current_role != 'user':
+        return jsonify({"message": "Access denied. Users only."}), 403
+
+    try:
+        user_transactions = mongo.transactions.find_one({"userId": ObjectId(current_user)})
+        if not user_transactions:
+            return jsonify({"error": "No transaction record found for the user."}), 404
+
+        model_stats = user_transactions.get("Model Stats", {})
+        if not model_stats:
+            return jsonify({"message": "No model stats found."}), 200
+
+        return jsonify(model_stats), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Error retrieving model stats: {str(e)}"}), 500

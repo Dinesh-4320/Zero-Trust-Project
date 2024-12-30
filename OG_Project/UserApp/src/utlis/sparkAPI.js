@@ -38,6 +38,7 @@ export const trainModel = async (sparkUrl, user_id) => {
 };
 
 export const updateDataset = async (sparkUrl, messages, labels) => {
+    console.log(messages, labels);
     try {
         const response = await fetch(`${sparkUrl}/update-dataset`, {
             method: "POST",

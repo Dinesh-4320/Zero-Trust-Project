@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { CircleAlert } from "lucide-react";
 
 const UpdateDataDialog = ({
   handleUpdateDataset,
@@ -60,11 +61,16 @@ const UpdateDataDialog = ({
     const transactionsToUpdate = sms.filter((item) =>
       selectedSms.includes(item.id)
     );
+
+    const ids = transactionsToUpdate.map((item) => item.id);
+    const messages = transactionsToUpdate.map((item) =>
+      item.message.replace(/\n/g, " ")
+    );
+    const labels = transactionsToUpdate.map((item) => item.label);
+    console.log("Updating transactions:", messages);
     try {
-      for (const transaction of transactionsToUpdate) {
-        await handleUpdateDataset(transaction.id, transaction.label); // Update each transaction
-      }
-      setSelectedSms([]); // Clear selection after update
+      await handleUpdateDataset(ids, messages, labels);
+      setSelectedSms([]);
     } catch (err) {
       console.error("Error updating transactions:", err);
     }
@@ -90,12 +96,17 @@ const UpdateDataDialog = ({
         <DialogHeader>
           <DialogTitle>Update Dataset</DialogTitle>
           <DialogDescription>
-            Select the transactions you want to update and choose their labels.
+            <div className="mt-2 flex items-center gap-2">
+              <CircleAlert className="text-yellow-500" size={20} />
+              <div>
+                Note that updating the dataset deletes the data from cloud.
+              </div>
+            </div>
           </DialogDescription>
         </DialogHeader>
-        <div className="max-h-96 overflow-auto mt-4">
+        <div className="max-h-96 overflow-auto">
           {sms.length === 0 ? (
-            <p>No transactions found.</p>
+            <div>No transactions found.</div>
           ) : (
             sms.map((transaction) => (
               <div
@@ -133,7 +144,7 @@ const UpdateDataDialog = ({
         </div>
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <Button
                 onClick={handleUpdate}
                 disabled={selectedSms.length === 0}

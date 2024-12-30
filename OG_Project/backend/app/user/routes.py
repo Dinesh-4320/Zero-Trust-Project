@@ -404,30 +404,33 @@ def update_sms_labels(current_user, current_role):
 @token_required
 def delete_sms_transaction(current_user, current_role):
     if current_role != 'user':
-        return jsonify({"message": "Access denied. Users only."}), 403
+        return jsonify({"error": "Access denied. Users only."}), 403
 
     data = request.get_json()
 
-    # Ensure that the request contains the SMS ID to be deleted
-    if 'id' not in data:
-        return jsonify({"error": "Missing 'id' field in the request."}), 400
+    if not data or 'ids' not in data:
+        return jsonify({"error": "Missing 'ids' field in the request."}), 400
 
-    sms_id = data['id']
+    sms_ids = data['ids']
+
+    if not isinstance(sms_ids, list) or not sms_ids:
+        return jsonify({"error": "'ids' must be a non-empty list."}), 400
 
     try:
-        # Delete the SMS transaction with the given ID
+        unset_fields = {f"transactionFromSMS.{sms_id}": "" for sms_id in sms_ids}
+
         result = mongo.transactions.update_one(
-            {"userId": ObjectId(current_user), f"transactionFromSMS.{sms_id}": {"$exists": True}},
-            {"$unset": {f"transactionFromSMS.{sms_id}": ""}}
+            {"userId": ObjectId(current_user)},
+            {"$unset": unset_fields}
         )
 
         if result.modified_count == 0:
-            return jsonify({"error": f"SMS with id {sms_id} not found."}), 404
+            return jsonify({"error": "None of the specified SMS IDs were found."}), 404
 
-        return jsonify({"message": "SMS transaction deleted successfully."}), 200
+        return jsonify({"message": "SMS transactions deleted successfully.", "deleted_ids": sms_ids}), 200
 
     except Exception as e:
-        return jsonify({"error": f"Error deleting SMS transaction: {str(e)}"}), 500
+        return jsonify({"error": f"Error deleting SMS transactions: {str(e)}"}), 500
 
 @user_bp.route("/model-stats", methods=["GET"])
 @token_required

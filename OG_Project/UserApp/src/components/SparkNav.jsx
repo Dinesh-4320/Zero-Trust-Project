@@ -78,17 +78,18 @@ const SparkNav = ({
     }
   };
 
-  const handleUpdateDataset = async () => {
+  const handleUpdateDataset = async (ids, messages, labels) => {
     if (sparkUrl) {
       setLoading(true);
       setUpdating(true);
       try {
-        const messages = filteredSms.map(([_, value]) => value.message);
-        const labels = filteredSms.map(([_, value]) => value.label);
-        console.log(messages);
-        console.log(labels);
-        const result = { message: "Dataset updated successfully" };
-        // const result = await updateDataset(sparkUrl, messages, labels);
+        const result = await updateDataset(sparkUrl, messages, labels);
+        if (result.message.includes("success")) {
+            await handleDeleteTransaction(ids);
+        }
+        else {
+            toast.error("Could not attempt to delete dataset.");
+        }
         toast.success(result.message);
       } catch (error) {
         toast.error(error.message);

@@ -58,25 +58,20 @@ const GetSMS = () => {
     }
   };
 
-  const handleDeleteTransaction = async (smsId) => {
+  const handleDeleteTransaction = async (smsIds) => {
+    console.log(smsIds);
     try {
       const response = await axios.post(
         API_URLS.DELETE_SMS_TRANSACTION,
-        { id: smsId },
+        { ids: smsIds },
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
         }
       );
-      toast.success(response.data.message); // Display success message
-
-      // Optionally, update the state to reflect the deleted SMS transaction
-      setTransactions((prevTransactions) => {
-        const updatedTransactions = { ...prevTransactions };
-        delete updatedTransactions[smsId]; // Remove the deleted SMS transaction from the state
-        return updatedTransactions;
-      });
+      console.log(response.data.message); 
+      return response.data;
     } catch (err) {
       toast.error("Failed to delete SMS transaction.");
       console.log(err.response?.data?.error);

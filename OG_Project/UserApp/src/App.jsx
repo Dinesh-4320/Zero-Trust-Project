@@ -9,7 +9,6 @@ import TransactionPage from "./pages/TransactionPage";
 import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
 import LoadingPage from "./pages/LoadingPage";
-import SMSTransactions from "./pages/SMSTransactions";
 import { API_URLS } from "./apiUrls";
 import ShareTransWithPay from "./pages/ShareTransWithPay";
 import GetSMS from "./pages/GetSMS";

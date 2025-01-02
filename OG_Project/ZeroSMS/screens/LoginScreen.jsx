@@ -57,13 +57,17 @@ const LoginScreen = () => {
   const fetchIP = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `https://json.extendsclass.com/bin/766b9c024d94?timestamp=${new Date().getTime()}`,
-      );
+      const response = await fetch(`https://api.jsonbin.io/v3/b/6770dcdcad19ca34f8e26b1a/latest?timestamp=${new Date().getTime()}`, {
+        method: "GET",
+        headers: {
+            "X-Master-Key": "$2a$10$tNVLRPxumzoBDbMfaYhQhexsIfJFwT38aJaOxYPaKtahTrVKqFp3S",
+        },
+    });
       if (response.ok) {
         const data = await response.json();
-        console.log('Data: ', data);
-        const url = data.backend_url.toString();
+        const record = data.record;
+        console.log('Data: ', record);
+        const url = record?.backend_url.toString();
         console.log('URL: ', url);
         setBACKEND_URL(url); // Update the state with backend URL
       }
@@ -173,7 +177,7 @@ const LoginScreen = () => {
             Unable to connect to backend server
           </Text>
         ) : BACKEND_URL === '' && loading ? (
-          <Text>Connecting to backend... {BACKEND_URL}</Text>
+          <Text className="text-yellow-500 text-center mt-5">Connecting to backend... {BACKEND_URL}</Text>
         ) : <Text classname="text-blue-700 text-center mt-5">Connected to backend: {BACKEND_URL}</Text>}
       </KeyboardAvoidingView>
     </SafeAreaView>

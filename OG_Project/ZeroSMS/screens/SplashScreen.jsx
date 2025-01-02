@@ -18,39 +18,39 @@ const SplashScreen = () => {
   };
 
   useEffect(() => {
-    // if (JailMonkey.isJailBroken()) {
-    //   setIsSecure(false);
-    //   Alert.alert(
-    //     'Security Alert',
-    //     'This device is rooted. The app cannot run on rooted devices.',
-    //     [{text: 'OK', onPress: handleExitApp}],
-    //   );
-    //   return;
-    // }
+    if (JailMonkey.isJailBroken()) {
+      setIsSecure(false);
+      Alert.alert(
+        'Security Alert',
+        'This device is rooted. The app cannot run on rooted devices.',
+        [{text: 'OK', onPress: handleExitApp}],
+      );
+      return;
+    }
 
-    // JailMonkey.isDevelopmentSettingsMode().then(isDevMode => {
-    //   if (isDevMode) {
-    //     setIsSecure(false);
-    //     Alert.alert(
-    //       'Security Alert',
-    //       'Developer options are enabled. Please disable them to continue.',
-    //       [{text: 'OK', onPress: handleExitApp}],
-    //     );
-    //     return;
-    //   }
-    // });
+    JailMonkey.isDevelopmentSettingsMode().then(isDevMode => {
+      if (isDevMode) {
+        setIsSecure(false);
+        Alert.alert(
+          'Security Alert',
+          'Developer options are enabled. Please disable them to continue.',
+          [{text: 'OK', onPress: handleExitApp}],
+        );
+        return;
+      }
+    });
 
-    // JailMonkey.isDebuggedMode().then(isDebugged => {
-    //   if (isDebugged) {
-    //     setIsSecure(false);
-    //     Alert.alert(
-    //       'Security Alert',
-    //       'Developer options are enabled. The app is being debugged and will now exit.',
-    //       [{text: 'OK', onPress: handleExitApp}],
-    //     );
-    //     return;
-    //   }
-    // });
+    JailMonkey.isDebuggedMode().then(isDebugged => {
+      if (isDebugged) {
+        setIsSecure(false);
+        Alert.alert(
+          'Security Alert',
+          'Developer options are enabled. The app is being debugged and will now exit.',
+          [{text: 'OK', onPress: handleExitApp}],
+        );
+        return;
+      }
+    });
 
     const timer = setTimeout(() => {
       if (isSecure) {

@@ -111,7 +111,7 @@ const SparkNav = ({
       id,
       message: value.message,
     }));
-    // console.log(messages);
+    console.log(messagesWithIds);
     try {
       setLoading(true);
       setPredicting(true);

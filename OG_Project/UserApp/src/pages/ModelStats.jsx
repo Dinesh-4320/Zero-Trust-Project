@@ -77,6 +77,27 @@ const ModelStats = () => {
           </div>
         )}
       </div>
+      <h1 className="text-center font-bold text-5xl mb-5">Other <span className="text-purple-400">Visualizations</span></h1>
+      <div className="mx-7 pb-5 px-10 relative">
+        {modelStats["visualizations"] && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+            {Object.entries(modelStats["visualizations"]).map(([imageName, base64Image], index) => (
+              <div key={index} className="w-full max-w-full">
+                <Card className="w-full max-w-full">
+                  <CardContent className="flex justify-center items-center p-0">
+                    <img
+                      src={`data:image/png;base64,${base64Image}`}
+                      alt={imageName}
+                      className="object-contain w-full max-h-screen"
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
+        )}
+
+      </div>
     </div>
   );
 };

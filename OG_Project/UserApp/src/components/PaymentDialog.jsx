@@ -13,7 +13,6 @@ import { generateDeviceFingerprint } from "../utlis/DeviceFingerprint";
 import { toast } from "react-hot-toast";
 import { API_URLS } from "../apiUrls";
 import { useDispatch, useSelector } from "react-redux";
-import ReCAPTCHA from "react-google-recaptcha";
 import { fetchUserProfile, shareTransaction } from "@/reducers/userSlice";
 
 const PaymentDialog = ({ auditorId, onClose }) => {
@@ -22,7 +21,6 @@ const PaymentDialog = ({ auditorId, onClose }) => {
   const [fingerprint, setFingerprint] = useState(null);
   const [agreementChecked, setAgreementChecked] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [isVerified, setIsVerified] = useState(false);
   const { userDetails } = useSelector((state) => state.user);
   const transactionId = useSelector((state) => state.user.transactionId);
 
@@ -57,18 +55,10 @@ const PaymentDialog = ({ auditorId, onClose }) => {
     }
   };
 
-  const handleVerify = (value) => {
-    setIsVerified(true);
-  };
-
   const handlePayment = () => {
     return new Promise((resolve, reject) => {
-      if (!agreementChecked || !isVerified) {
-        toast.error(
-          !agreementChecked
-            ? "You must agree to the terms and conditions."
-            : "Please complete the CAPTCHA verification."
-        );
+      if (!agreementChecked) {
+        toast.error("You must agree to the terms and conditions.");
         reject(new Error("Preconditions not met"));
         return;
       }
@@ -177,24 +167,21 @@ const PaymentDialog = ({ auditorId, onClose }) => {
             </div>
           )}
         </div>
-        {!loading && (
-          <div className="mt-2">
-            <div className="flex gap-5 items-center">
-              <ReCAPTCHA
-                onChange={handleVerify}
-                sitekey={API_URLS.RECAPTCHA_SITE_KEY}
-                size="normal"
-              />
-            </div>
-          </div>
-        )}
         <div className="mt-6 flex justify-end space-x-4">
+          <Button variant="destructive"
+            onClick={() => {
+              toast.error("Testing Sentry by throwing an Error");
+              throw new Error("Sentry Test Error");
+            }}
+          >
+            Break the world
+          </Button>
           <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
           <Button
             onClick={handleShare}
-            disabled={!agreementChecked || loading || !isVerified}
+            disabled={!agreementChecked || loading}
           >
             Proceed to Payment
           </Button>

@@ -26,6 +26,39 @@ def main(dataset_path, output_dir):
 
         # Preprocessing
         os.makedirs(output_dir, exist_ok=True)
+        os.makedirs("outputs/visualizations", exist_ok=True)
+        
+        # Visualize class distribution
+        class_distribution = data.groupBy("res").count().toPandas()
+        sns.barplot(x="res", y="count", data=class_distribution, palette="viridis")
+        plt.title("Class Distribution")
+        plt.xlabel("Class (Spam/Non-Spam)")
+        plt.ylabel("Count")
+
+        # Add count labels on top of each bar
+        for p in plt.gca().patches:
+            plt.annotate(f'{p.get_height()}', (p.get_x() + p.get_width() / 2., p.get_height()), 
+                        ha='center', va='center', xytext=(0, 5), 
+                        textcoords='offset points')
+
+        plt.savefig(os.path.join("outputs/visualizations", "class_distribution.png"))
+        plt.close()
+        
+        # Get counts for each class
+        counts = class_distribution['count'].values
+        labels = class_distribution['res'].values
+
+        # Create a pie chart
+        plt.figure(figsize=(6, 6))
+        plt.pie(counts, labels=labels, autopct='%1.1f%%', startangle=90)
+        plt.title("Class Distribution")
+        plt.axis('equal')  
+        
+        for i, label in enumerate(labels):
+            plt.text(x=0, y=0, s=f'{counts[i]}', ha='center', va='center', transform=plt.gca().transAxes) 
+
+        plt.savefig(os.path.join("outputs/visualizations", "class_distribution_pie.png"))
+        plt.close()
 
         indexer = StringIndexer(inputCol="res", outputCol="label")
         data = indexer.fit(data).transform(data)
@@ -159,6 +192,28 @@ def main(dataset_path, output_dir):
         plt.ylabel("True Positive Rate")
         plt.legend()
         plt.savefig(os.path.join(xgb_output_dir, "roc_curve.png"))
+        plt.close()
+        
+        # Visualize Metrics Comparison
+        metrics = ["accuracy", "f1_score", "roc_auc"]
+        for metric in metrics:
+            metric_values = [results[model][metric] for model in results.keys()]
+            plt.figure(figsize=(8, 6))
+            sns.barplot(x=list(results.keys()), y=metric_values, palette="Blues_d")
+            plt.title(f"{metric.capitalize()} Comparison")
+            plt.xlabel("Models")
+            plt.ylabel(metric.capitalize())
+            plt.savefig(f"outputs/visualizations/{metric}_comparison.png")
+            plt.close()
+            
+        # Plot bar chart for evaluation metrics
+        metrics = {"F1-Score": f1, "ROC-AUC": roc_auc}
+        metrics_items = list(metrics.items())
+        metrics_labels, metrics_values = zip(*metrics_items)
+        plt.figure(figsize=(8, 6))
+        sns.barplot(x=metrics_labels, y=metrics_values, palette="Blues_d")
+        plt.title("Evaluation Metrics")
+        plt.savefig("outputs/visualizations/metrics_bar_chart.png")
         plt.close()
 
         # Save results as a JSON file

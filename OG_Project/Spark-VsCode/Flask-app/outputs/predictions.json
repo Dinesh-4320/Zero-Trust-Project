@@ -1,20 +1,5 @@
 {
-    "Amt Sent Rs.900.00\nFrom HDFC Bank A/C *5081\nTo ALAMELU R\nOn 13-10\nRef 428758925523\nNot You? Call 18002586161/SMS BLOCK UPI to 7308080808": {
-        "NaiveBayes": 1,
-        "XGBoost": 1,
-        "LinearSVC": 1
-    },
-    "Amt Sent Rs.150.00\nFrom HDFC Bank A/C *5081\nTo ARAVIND S/O MOHANRAJ\nOn 07-10\nRef 428152506048\nNot You? Call 18002586161/SMS BLOCK UPI to 7308080808": {
-        "NaiveBayes": 1,
-        "XGBoost": 1,
-        "LinearSVC": 1
-    },
-    "Dear customer, your Atal Pension Yojana contribution amount for the Month October is Rs 42/-, Kindly maintain sufficient balance in your a/c XXXX7152 and avoid penalty if any. Canara Bank.": {
-        "NaiveBayes": 0,
-        "XGBoost": 1,
-        "LinearSVC": 0
-    },
-    "Rs.468.00 paid thru A/C XX7152 on 16-10-24 20:51:56 to Mr MOHANA KRISH, UPI Ref 429075140114. If not done, SMS BLOCKUPI to 9901771222.-Canara Bank": {
+    "Amt Sent Rs.25.00 From HDFC Bank A/C *5081 To MOHAMEDIMRANS On 29-10 Ref 430364797391 Not You? Call 18002586161/SMS BLOCK UPI to 7308080808": {
         "NaiveBayes": 1,
         "XGBoost": 1,
         "LinearSVC": 1

@@ -186,19 +186,20 @@ def predict_messages():
             return jsonify({"error": "No messages provided for prediction."}), 400
 
         messages = input_data["messages"]
+
         if not isinstance(messages, list) or not messages:
             return jsonify({"error": "Messages should be a non-empty list."}), 400
         
-        # Validate that each message in the list has an 'id' and 'message'
+        # #Validate that each message in the list has an 'id' and 'message'
         for msg in messages:
             if not isinstance(msg, dict) or 'id' not in msg or 'message' not in msg:
                 return jsonify({"error": "Each message must have an 'id' and 'message'."}), 400
-        
-        print(messages)
 
         predict_script = "predict.py"  # Path to predict.py
-        messages_texts = [msg['message'] for msg in messages] 
-        print(messages_texts)
+        messages_texts = [msg['message'].replace('\n', ' ') for msg in messages] 
+        
+        print("Messages:", messages_texts)
+        
         command = ["python", predict_script, "--messages"] + messages_texts + ["--models_dir", MODEL_FOLDER, "--output_dir", OUTPUT_FOLDER]
 
         # Run the prediction script
@@ -217,11 +218,13 @@ def predict_messages():
 
         predictions_result = {}
         for msg in messages:
-            message_text = msg['message']
+            message_text = msg['message'].replace('\n', ' ')
             message_id = msg['id']
 
             # Get the prediction for this message, if it exists
             model_predictions = predictions.get(message_text, {})
+            
+            print("Model Predictions:", model_predictions)
 
             # Calculate the label based on model predictions
             if model_predictions:
@@ -229,6 +232,7 @@ def predict_messages():
                 label = "spam" if num_spam_predictions >= 2 else "ham"
             else:
                 label = None  # In case no prediction exists for the message
+            print("Label:", label)
 
             predictions_result[message_id] = {"label": label, "message": msg['message']}
 

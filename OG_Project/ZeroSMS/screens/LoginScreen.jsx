@@ -57,12 +57,16 @@ const LoginScreen = () => {
   const fetchIP = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`https://api.jsonbin.io/v3/b/6770dcdcad19ca34f8e26b1a/latest?timestamp=${new Date().getTime()}`, {
-        method: "GET",
-        headers: {
-            "X-Master-Key": "$2a$10$tNVLRPxumzoBDbMfaYhQhexsIfJFwT38aJaOxYPaKtahTrVKqFp3S",
+      const response = await fetch(
+        `https://api.jsonbin.io/v3/b/6770dcdcad19ca34f8e26b1a/latest?timestamp=${new Date().getTime()}`,
+        {
+          method: 'GET',
+          headers: {
+            'X-Master-Key':
+              '$2a$10$tNVLRPxumzoBDbMfaYhQhexsIfJFwT38aJaOxYPaKtahTrVKqFp3S',
+          },
         },
-    });
+      );
       if (response.ok) {
         const data = await response.json();
         const record = data.record;
@@ -85,9 +89,12 @@ const LoginScreen = () => {
       return;
     } else {
       console.log('URL fetched:', BACKEND_URL);
-      dispatch(loginStart()); 
+      dispatch(loginStart());
 
       const hashedPassword = sha256(password);
+      console.log('Credentials: ', email, password);
+      console.log('Final backend URL used for login:', `http://${BACKEND_URL}/auth/login`);
+
       try {
         const response = await axios.post(`http://${BACKEND_URL}/auth/login`, {
           username: email,
@@ -119,9 +126,25 @@ const LoginScreen = () => {
           dispatch(loginFailure('Login failed')); // Dispatch login failure
         }
       } catch (err) {
-        console.error(err);
-        dispatch(loginFailure(err.response?.data?.error || 'Login failed')); // Dispatch login failure
+        console.error('Axios Error:', err);
+        if (err.response) {
+          // Server responded with a status other than 2xx
+          console.error('Response Data:', err.response.data);
+          console.error('Status:', err.response.status);
+          console.error('Headers:', err.response.headers);
+          dispatch(loginFailure(err.response.data?.error || 'Login failed. Server responded with error.'));
+        } else if (err.request) {
+          // Request was made but no response received
+          console.error('Request was made but no response received');
+          console.error('Request Object:', err.request);
+          dispatch(loginFailure('Network error: No response received from server.'));
+        } else {
+          // Something else happened in setting up the request
+          console.error('Error Message:', err.message);
+          dispatch(loginFailure(`Unexpected error: ${err.message}`));
+        }
       }
+      
     }
   };
 
@@ -164,7 +187,7 @@ const LoginScreen = () => {
         <TouchableOpacity
           className="mt-5 mx-5 bg-[#003580] py-3 items-center justify-center rounded-lg"
           onPress={() => handleLogin()}
-          disabled={loading} // Disable login while fetching IP
+          disabled={loading || BACKEND_URL === ''}
         >
           {loading ? (
             <ActivityIndicator size="small" color="#fff" />
@@ -172,13 +195,25 @@ const LoginScreen = () => {
             <Text className="text-white text-lg font-semibold">Login In</Text>
           )}
         </TouchableOpacity>
-        {BACKEND_URL === '' && !loading ? (
-          <Text className="text-red-500 text-center mt-5">
-            Unable to connect to backend server
-          </Text>
-        ) : BACKEND_URL === '' && loading ? (
-          <Text className="text-yellow-500 text-center mt-5">Connecting to backend... {BACKEND_URL}</Text>
-        ) : <Text classname="text-blue-700 text-center mt-5">Connected to backend: {BACKEND_URL}</Text>}
+        <View>
+          {!loading && BACKEND_URL === '' && (
+            <Text className="text-red-500 text-center mt-5">
+              Unable to connect to backend server
+            </Text>
+          )}
+
+          {loading && BACKEND_URL === '' && (
+            <Text className="text-yellow-500 text-center mt-5">
+              Connecting to backend... {BACKEND_URL}
+            </Text>
+          )}
+
+          {!loading && BACKEND_URL !== '' && (
+            <Text className="text-blue-700 text-center mt-5">
+              Connected to backend: {BACKEND_URL}
+            </Text>
+          )}
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

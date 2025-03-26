@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAuditorInfo,
-} from "../reducers/userSlice";
+import { getAuditorInfo } from "../reducers/userSlice";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -37,8 +35,41 @@ const HomePage = () => {
   const sharedUsers = useSelector((state) => state.user.sharedUsers);
   const loading = useSelector((state) => state.user.loading);
 
-  const [tasks, setTasks] = useState([]);
+  // const [tasks, setTasks] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
+
+  const tasks = [
+    {
+      userId: 1,
+      id: 1,
+      title: "Review quarterly financial statements",
+      completed: false,
+    },
+    {
+      userId: 1,
+      id: 2,
+      title: "Verify tax compliance for the fiscal year",
+      completed: true,
+    },
+    {
+      userId: 2,
+      id: 3,
+      title: "Assess internal controls for fraud prevention",
+      completed: false,
+    },
+    {
+      userId: 2,
+      id: 4,
+      title: "Audit expense reports for policy violations",
+      completed: true,
+    },
+    {
+      userId: 3,
+      id: 5,
+      title: "Reconcile bank statements with ledger entries",
+      completed: false,
+    },
+  ];
 
   // Fetch auditor info and tasks
   useEffect(() => {
@@ -52,20 +83,19 @@ const HomePage = () => {
       }
     };
 
-    const fetchTasks = async () => {
-      try {
-        const response = await axios.get(
-          "https://jsonplaceholder.typicode.com/todos?_limit=5"
-        );
-        setTasks(response.data);
-      } catch (error) {
-        toast.error("Failed to fetch tasks.");
-        console.error("Error fetching tasks:", error);
-      }
-    };
-
+    // const fetchTasks = async () => {
+    //   try {
+    //     const response = await axios.get(
+    //       "https://jsonplaceholder.typicode.com/todos?_limit=5"
+    //     );
+    //     setTasks(response.data);
+    //   } catch (error) {
+    //     toast.error("Failed to fetch tasks.");
+    //     console.error("Error fetching tasks:", error);
+    //   }
+    // };
+    // fetchTasks();
     fetchAuditorInfo();
-    fetchTasks();
   }, [dispatch]);
 
   const handleUserSelect = (transId) => {
@@ -92,7 +122,6 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-200 to-blue-200 p-8">
       <div className="max-w-6xl mx-auto">
-
         <div className="flex flex-col gap-5 md:flex-row justify-between mb-5">
           {auditInfo && (
             <div className="bg-white shadow-md rounded-lg p-4 mb-4 md:mb-0 md:w-1/3">

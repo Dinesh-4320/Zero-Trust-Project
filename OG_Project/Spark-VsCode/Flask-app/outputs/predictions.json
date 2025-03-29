@@ -3,5 +3,20 @@
         "NaiveBayes": 1,
         "XGBoost": 1,
         "LinearSVC": 1
+    },
+    "Congrats 79046XX, INR. 10,000 to INR. 2,00,000* loan is ready to be credited to your Bank A/c on 23-12-2024. Check Offer http://kx16.in/MOBIKW/9NaEhu -MobiKwik": {
+        "NaiveBayes": 0,
+        "XGBoost": 0,
+        "LinearSVC": 0
+    },
+    "A/c *0109 debited Rs. 30.00 on 20-12-24 to Mr Ragul Muthusami. UPI:435567309916. Not you? SMS BLOCK to 9231000001, Dial 1930 for Cyber Fraud - Indian Bank": {
+        "NaiveBayes": 1,
+        "XGBoost": 1,
+        "LinearSVC": 1
+    },
+    "Hi Mudra Finance Loan Yojna Rs.1,00000-/ To Rs.25,00000-/ minimum Interests and maximum subsidy For more detail Call 8929810695 AGCBCA": {
+        "NaiveBayes": 1,
+        "XGBoost": 0,
+        "LinearSVC": 1
     }
 }

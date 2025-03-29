@@ -11,7 +11,11 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+# Enable CORS for all routes, all origins, and support credentials
+CORS(app, resources={r"/*": {"origins": "*"}}, 
+     supports_credentials=True, 
+     methods=["GET", "POST", "OPTIONS"], 
+     allow_headers=["Content-Type", "Authorization", "ngrok-skip-browser-warning"])
 
 UPLOAD_FOLDER = "dataset"  # Static dataset folder
 OUTPUT_FOLDER = "outputs"
@@ -38,6 +42,7 @@ def simulated_progress():
 
 @app.route('/train', methods=['GET'])
 def train_model():
+    print("Training model...")
     try:
         if not os.path.exists(DATASET_PATH):
             return jsonify({"error": f"Dataset file not found at {DATASET_PATH}"}), 400

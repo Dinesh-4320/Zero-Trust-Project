@@ -35,7 +35,7 @@ const SparkNav = ({
 
   const handleConnect = async () => {
     setDisabled(false);
-    setSparkUrl("http://192.168.3.128:5000");
+    setSparkUrl("https://ladybug-resolved-lynx.ngrok-free.app");
     toast.success("Connected to Apache Spark");
   };
 

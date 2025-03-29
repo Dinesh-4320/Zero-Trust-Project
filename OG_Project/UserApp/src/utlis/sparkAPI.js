@@ -1,5 +1,6 @@
 import { API_KEYS } from "../apiUrls";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 export const connectToSparkBackend = async () => {
     try {
@@ -20,9 +21,15 @@ export const connectToSparkBackend = async () => {
 
 export const trainModel = async (sparkUrl, user_id) => {
     try {
+        console.log(`${sparkUrl}/train?user_id=${encodeURIComponent(user_id)}`);
         const response = await fetch(`${sparkUrl}/train?user_id=${encodeURIComponent(user_id)}`, {
             method: "GET",
+            headers: {
+                "ngrok-skip-browser-warning": "69420",
+            },
         });
+
+        console.log("Response: :", response);
         const data = await response.json();
         console.log(data);
         if (data.error) {
@@ -32,6 +39,7 @@ export const trainModel = async (sparkUrl, user_id) => {
         }
         return data;
     } catch (error) {
+        console.log("Error in traing: ", error);
         return error;
         // throw new Error(`Training failed: ${error.message}`);
     }
@@ -44,6 +52,7 @@ export const updateDataset = async (sparkUrl, messages, labels) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "ngrok-skip-browser-warning": "69420",
             },
             body: JSON.stringify({ messages, label: labels }),
         });
@@ -66,6 +75,7 @@ export const predictMessages = async (sparkUrl, messages) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "ngrok-skip-browser-warning": "69420",
             },
             body: msg,
         });
@@ -82,4 +92,5 @@ export const predictMessages = async (sparkUrl, messages) => {
         throw new Error(`Prediction failed: ${error.message}`);
     }
 };
+
 

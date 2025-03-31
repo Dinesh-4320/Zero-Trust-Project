@@ -31,7 +31,7 @@ const SparkNav = ({
     ([key, value]) => value.label === null
   );
 
-  //   console.log(filteredSms);
+    // console.log("filteredSms", filteredSms);
 
   const handleConnect = async () => {
     setDisabled(false);
@@ -108,7 +108,7 @@ const SparkNav = ({
     }
 
     const messagesWithIds = filteredSms.map(([id, value]) => ({
-      id,
+      id: value.id,
       message: value.message,
     }));
     console.log(messagesWithIds);
@@ -117,7 +117,7 @@ const SparkNav = ({
       setPredicting(true);
       const predictions = await predictMessages(sparkUrl, messagesWithIds);
       toast.success("Prediction completed.");
-      //   console.log(predictions);
+      console.log(predictions);
 
       for (const [smsId, prediction] of Object.entries(predictions)) {
         const { label } = prediction;

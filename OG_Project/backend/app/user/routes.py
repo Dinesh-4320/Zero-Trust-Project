@@ -378,26 +378,35 @@ def update_sms_labels(current_user, current_role):
         return jsonify({"error": "Invalid data format. Expected a list."}), 400
 
     try:
-        # Process each SMS update request
+        print(data)
         for sms in data:
             if 'id' not in sms or 'label' not in sms:
+                print("Missing required fields (id, label) in SMS data.")
                 return jsonify({"error": "Missing required fields (id, label) in SMS data."}), 400
 
             sms_id = sms['id']
             label = sms['label']
 
-            # Update the SMS label based on the given id
+            # Update the SMS label or create it if it does not exist
             result = mongo.transactions.update_one(
-                {"userId": ObjectId(current_user), f"transactionFromSMS.{sms_id}": {"$exists": True}},
-                {"$set": {f"transactionFromSMS.{sms_id}.label": label}}
+                {
+                    "userId": ObjectId(current_user),
+                    f"transactionFromSMS.{sms_id}": {"$exists": True}
+                },
+                {
+                    "$set": {f"transactionFromSMS.{sms_id}.label": label}
+                },
+                upsert=True  
             )
 
             if result.modified_count == 0:
+                print(f"SMS with id {sms_id} not found or label not updated.")
                 return jsonify({"error": f"SMS with id {sms_id} not found or label not updated."}), 404
 
         return jsonify({"message": "SMS labels updated successfully."}), 200
 
     except Exception as e:
+        print("Error updating SMS labels:", e)
         return jsonify({"error": f"Error updating SMS labels: {str(e)}"}), 500
 
 @user_bp.route("/delete-sms-transaction", methods=["POST"])

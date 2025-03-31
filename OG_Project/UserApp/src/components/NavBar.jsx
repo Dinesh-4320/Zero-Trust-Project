@@ -3,12 +3,13 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import crypto from "../assets/images/crypto.png";
 import { Link } from "react-router-dom";
+import { API_URLS } from "../apiUrls";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
   { name: "Profile", href: "/user", current: false },
   { name: "Share", href: "/share", current: false },
-  {name: 'SMS Transactions', href: '/newTransactions', current: false},
+  { name: "SMS Transactions", href: "/newTransactions", current: false },
 ];
 
 function classNames(...classes) {
@@ -16,6 +17,10 @@ function classNames(...classes) {
 }
 
 export default function Example() {
+  const handleSignOut = () => {
+    localStorage.clear();
+    window.location.href = API_URLS.REDIRECT_BAD_URL;
+  };
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
@@ -128,7 +133,8 @@ export default function Example() {
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          <a
+                          <p
+                            onClick={handleSignOut}
                             href="#"
                             className={classNames(
                               active ? "bg-gray-100" : "",
@@ -136,7 +142,7 @@ export default function Example() {
                             )}
                           >
                             Sign out
-                          </a>
+                          </p>
                         )}
                       </Menu.Item>
                     </Menu.Items>

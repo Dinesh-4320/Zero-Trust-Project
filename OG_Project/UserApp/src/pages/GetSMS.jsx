@@ -21,13 +21,15 @@ const GetSMS = () => {
           Authorization: `Bearer ${authToken}`,
         },
       });
-      setTransactions(response.data);
-      setLoading(false);
       const res = Object.entries(response.data).map(([id, value]) => ({
         id,
         message: value.message,
-        label: value.label,
+        timestamp: value.timestamp,
+        label: value.label || null,
       }));
+      // console.log("transactions\n", res);
+      setTransactions(res);
+      setLoading(false);
       return response.data;
     } catch (err) {
       setError("Failed to fetch SMS transactions.");

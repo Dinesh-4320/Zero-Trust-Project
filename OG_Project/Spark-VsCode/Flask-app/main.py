@@ -138,6 +138,7 @@ def update_dataset():
     try:
         # Get the new data from the request
         input_data = request.json
+            
         if not input_data or "messages" not in input_data or "label" not in input_data:
             return jsonify({"error": "Invalid data format. 'messages' and 'label' are required."}), 400
 
@@ -179,18 +180,19 @@ def update_dataset():
 
 @app.route('/predict', methods=['POST'])
 def predict_messages():
+    print("\n\nHI Inside predict lables!!\n\n")
     try:
         # Check if models directory exists
         if not os.path.exists(MODEL_FOLDER):
             return jsonify({"error": "Models not found. Please train the models first."}), 400
 
         # Get input messages from the request
-        print(request)
         input_data = request.json
         if not input_data or "messages" not in input_data:
             return jsonify({"error": "No messages provided for prediction."}), 400
 
         messages = input_data["messages"]
+        print("Messages:", messages[0])
 
         if not isinstance(messages, list) or not messages:
             return jsonify({"error": "Messages should be a non-empty list."}), 400
@@ -203,7 +205,7 @@ def predict_messages():
         predict_script = "predict.py"  # Path to predict.py
         messages_texts = [msg['message'].replace('\n', ' ') for msg in messages] 
         
-        print("Messages:", messages_texts)
+        # print("Messages:", messages_texts)
         
         command = ["python", predict_script, "--messages"] + messages_texts + ["--models_dir", MODEL_FOLDER, "--output_dir", OUTPUT_FOLDER]
 
